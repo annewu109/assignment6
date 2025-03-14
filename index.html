@@ -40,7 +40,7 @@
                 http.onreadystatechange = function () {
                     if (http.readyState == 4 && http.status == 200) {
                         var palette = JSON.parse(http.responseText).result;
-                        console.log(palette);
+                        
                         for (var i = 0; i < 5; i++) {
                             $("#color" + i).css("background-color", "rgb(" + palette[i][0] + ", " + palette[i][1] + ", " + palette[i][2] + ")");
                             $("#color" + i).text("R: " + palette[i][0] + " G: " + palette[i][1] + " B: " + palette[i][2]);
@@ -58,7 +58,6 @@
                 listhttp.onreadystatechange = function () {
                     if (listhttp.readyState == 4 && listhttp.status == 200) {
                         var models = JSON.parse(listhttp.responseText).result;
-                        console.log(models);
 
                         models.forEach(element => {
                             $("select").append("<option value='" + element + "'>" + element + "</option>");
@@ -66,7 +65,7 @@
                     }
                 }
 
-                listhttp.open("POST", listUrl, true);
+                listhttp.open("GET", listUrl, true);
                 listhttp.send();
 
                 //api request for colors is sent when botton is clicked
