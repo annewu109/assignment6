@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Products</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <style>
+        #colors {
+            align-self: center;
+            margin: auto;
+            padding-top: 10px;
+
+            width: 90vw;
+            height: 85vh;
+            display: none;
+        }
+
+        #colors > div {
+            width: 20%;
+            height: 100%;
+
+            text-align: center;
+            font-size: larger;
+        }
+    </style>
+</head>
+
+    <body>
+        <script>
+            window.onload = () => {
+
+                var url = "http://colormind.io/api/";
+                var listUrl = "http://colormind.io/list/"
+
+                var http = new XMLHttpRequest();
+                var listhttp = new XMLHttpRequest();
+
+                //displays colors when api response is recieved
+                http.onreadystatechange = function () {
+                    if (http.readyState == 4 && http.status == 200) {
+                        var palette = JSON.parse(http.responseText).result;
+                        console.log(palette);
+                        for (var i = 0; i < 5; i++) {
+                            $("#color" + i).css("background-color", "rgb(" + palette[i][0] + ", " + palette[i][1] + ", " + palette[i][2] + ")");
+                            $("#color" + i).text("R: " + palette[i][0] + " G: " + palette[i][1] + " B: " + palette[i][2]);
+                            
+                            if (palette[i][0] + palette[i][1] + palette[i][2] < 382.5) 
+                                $("#color" + i).css("color", "white");
+                            else
+                                $("#color" + i).css("color", "black");
+                        }
+                        $("#colors").css("display", "flex");
+                    }
+                }
+
+                //adds color palette options to dropdown
+                listhttp.onreadystatechange = function () {
+                    if (listhttp.readyState == 4 && listhttp.status == 200) {
+                        var models = JSON.parse(listhttp.responseText).result;
+                        console.log(models);
+
+                        models.forEach(element => {
+                            $("select").append("<option value='" + element + "'>" + element + "</option>");
+                        });
+                    }
+                }
+
+                listhttp.open("POST", listUrl, true);
+                listhttp.send();
+
+                //api request for colors is sent when botton is clicked
+                $("button").on("click", () => {
+                    var data = {
+                        model: $("select").val(), //chosen pallete option
+                        input: ["N", "N", "N", "N", "N"]
+                    }
+                    http.open("POST", url, true);
+                    http.send(JSON.stringify(data));
+                })
+                
+            }
+        </script>
+
+        <p>Choose the palette theme:</p>
+        <select name="categories"></select>
+        <button type="button">Generate Palette</button>
+
+
+        <div id="colors">
+            <div id="color0"></div>
+            <div id="color1"></div>
+            <div id="color2"></div>
+            <div id="color3"></div>
+            <div id="color4"></div>
+        </div>
+    </body>
+
+</html>
